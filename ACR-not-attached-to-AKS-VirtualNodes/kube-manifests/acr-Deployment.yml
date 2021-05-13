@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aksrg2ss-deployment
+  labels:
+    app: aksrg2ss
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aksrg2ss
+  template:
+    metadata:
+      labels:
+        app: aksrg2ss
+    spec:
+      containers:
+        - name: aksrg2ss-vn
+          image: aksrg2ss.azurecr.io/app3/acr-app3:v1 
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+      imagePullSecrets:  
+        - name: aksrg2ss-secret  
+# To schedule pods on Azure Virtual Nodes            
+      nodeSelector:
+        kubernetes.io/role: agent
+        beta.kubernetes.io/os: linux
+        type: virtual-kubelet
+      tolerations:
+      - key: virtual-kubelet.io/provider
+        operator: Exists
+      - key: azure.com/aci
+        effect: NoSchedule            
+
+
+   
